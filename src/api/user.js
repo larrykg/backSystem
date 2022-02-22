@@ -1,5 +1,7 @@
+//引入axios 进行二次封装
 import request from '@/utils/request'
 
+//登录接口
 export function login(data) {
   return request({
     url: '/vue-admin-template/user/login',
