@@ -1,9 +1,10 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules"
+             class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">登录</h3>
       </div>
 
       <el-form-item prop="username">
@@ -41,7 +42,9 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+
+
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
@@ -58,6 +61,7 @@ import { validUsername } from '@/utils/validate'
 export default {
   name: 'Login',
   data() {
+    //表单验证
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('Please enter the correct user name'))
@@ -110,7 +114,9 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
+            //路由跳转
             this.$router.push({ path: this.redirect || '/' })
+            //loading效果结束
             this.loading = false
           }).catch(() => {
             this.loading = false
@@ -182,7 +188,8 @@ $light_gray:#eee;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
-
+  background: url(~@/assets/login_background.jpeg);
+  background-size: 100% 100% ;
   .login-form {
     position: relative;
     width: 520px;
