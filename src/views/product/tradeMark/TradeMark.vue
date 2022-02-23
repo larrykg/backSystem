@@ -36,11 +36,11 @@
     </el-pagination>
 
     <el-dialog :title="tmForm.id?'修改品牌':'添加品牌'" :visible.sync="dialogFormVisible">
-      <el-form style="width: 80%" :model="tmForm">
-        <el-form-item label="品牌名称" label-width="100px">
+      <el-form style="width: 80%" :model="tmForm" :rules="rules" ref="ruleForm">
+        <el-form-item label="品牌名称" label-width="100px" prop="tmName">
           <el-input autocomplete="off" v-model="tmForm.tmName"></el-input>
         </el-form-item>
-        <el-form-item label="品牌LOGO" label-width="100px">
+        <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
           <!--          这里收集数据不能使用v-model因为不是表单元素-->
           <el-upload
             class="avatar-uploader"
@@ -67,6 +67,14 @@
   export default {
     name: "TradeMark",
     data() {
+      let validateTmName = (rule, value, callback) => {
+        //自定义检验
+        if (value.length < 2 || value.length > 10) {
+          callback(new Error('品牌名称2-10位'))
+        } else {
+          callback()
+        }
+      };
       return {
         page: 1,
         limit: 3,
@@ -79,6 +87,16 @@
         tmForm: {
           tmName: '',
           logoUrl: ''
+        },
+        //表单验证规则
+        rules: {
+          tmName: [
+            {required: true, message: '请输入品牌名称', trigger: 'blur'},
+            {validator: validateTmName, trigger: 'change'}
+          ],
+          logoUrl: [
+            {required: true, message: '请选择品牌图片'}
+          ],
         }
       }
     },
@@ -136,21 +154,29 @@
         return isJPG && isLt2M;
       },
       //添加按钮 添加或修修改
-      async addOrUpdateTradeMark() {
-        this.dialogFormVisible = false;
-        let result = await this.$API.trademark.reqAddOrUpdateTradeMark(this.tmForm);
-        if (result.code == 200) {
-          //弹出信息
-          this.$message({
-            message: this.tmForm.id ? '修改品牌成功' : '添加品牌成功',
-            type: 'success'
-          });
-          this.getPageList(this.tmForm.id ? this.page : 1)
-        }
+      addOrUpdateTradeMark() {
+        //验证通过方能继续
+        this.$refs.ruleForm.validate(async (success) => {
+          if (success) {
+            this.dialogFormVisible = false;
+            let result = await this.$API.trademark.reqAddOrUpdateTradeMark(this.tmForm);
+            if (result.code == 200) {
+              //弹出信息
+              this.$message({
+                message: this.tmForm.id ? '修改品牌成功' : '添加品牌成功',
+                type: 'success'
+              });
+              this.getPageList(this.tmForm.id ? this.page : 1)
+            }
+          } else {
+            return false
+          }
+        })
       }
     }
 
   }
+
 </script>
 
 <style scoped>
