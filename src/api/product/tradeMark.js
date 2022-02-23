@@ -9,3 +9,24 @@ export const reqTradeMarkList = (page, limit) => {
     method: 'get'
   })
 }
+
+//处理添加品牌 新增 /admin/product/baseTrademark/save 参数   "logoUrl": "string", "tmName": "string"  post
+//处理添加品牌 修改 /admin/product/baseTrademark/update 参数   id: "logoUrl": "string", "tmName": "string"  put
+
+export const reqAddOrUpdateTradeMark = (tradeMark) => {
+  if (tradeMark.id) {
+    return request({
+      url: '/admin/product/baseTrademark/update',
+      method: 'put',
+      data: tradeMark
+    })
+  } else {
+    return request({
+      url: '/admin/product/baseTrademark/save',
+      method: 'post',
+      data: tradeMark
+    })
+  }
+
+}
+
