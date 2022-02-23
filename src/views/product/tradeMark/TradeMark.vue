@@ -17,7 +17,7 @@
       </el-table-column>
       <el-table-column prop="prop" label="操作" width="width">
         <template slot-scope="{row,$index}">
-          <el-button type="warning" icon="el-icon-edit" size="limit" @click="updateTradeMark">修改</el-button>
+          <el-button type="warning" icon="el-icon-edit" size="limit" @click="updateTradeMark(row)">修改</el-button>
           <el-button type="danger" icon="el-icon-delete" size="limit">删除</el-button>
         </template>
       </el-table-column>
@@ -35,7 +35,7 @@
     >
     </el-pagination>
 
-    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+    <el-dialog :title="tmForm.id?'修改品牌':'添加品牌'" :visible.sync="dialogFormVisible">
       <el-form style="width: 80%" :model="tmForm">
         <el-form-item label="品牌名称" label-width="100px">
           <el-input autocomplete="off" v-model="tmForm.tmName"></el-input>
@@ -111,8 +111,11 @@
         this.dialogFormVisible = true
       },
       //修改
-      updateTradeMark() {
-        this.dialogFormVisible = true
+      updateTradeMark(row) {
+        //row 时当前选中的品牌信息
+        console.log(row);
+        this.dialogFormVisible = true;
+        this.tmForm = {...row}
       },
       //图片上传成功
       handleAvatarSuccess(res, file) {
@@ -138,8 +141,11 @@
         let result = await this.$API.trademark.reqAddOrUpdateTradeMark(this.tmForm);
         if (result.code == 200) {
           //弹出信息
-          this.$message(this.tmForm.id ? '修改品牌成功' : '添加品牌成功');
-          this.getPageList()
+          this.$message({
+            message: this.tmForm.id ? '修改品牌成功' : '添加品牌成功',
+            type: 'success'
+          });
+          this.getPageList(this.tmForm.id ? this.page : 1)
         }
       }
     }
