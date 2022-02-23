@@ -37,6 +37,8 @@ Vue.config.productionTip = false
 
 //引入接口
 import API from '@/api';
+import CategorySelect from "@/components/categorySelect/CategorySelect";
+Vue.component(CategorySelect.name,CategorySelect)
 
 Vue.prototype.$API = API;
 new Vue({
