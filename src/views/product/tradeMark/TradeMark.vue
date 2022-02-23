@@ -18,7 +18,7 @@
       <el-table-column prop="prop" label="操作" width="width">
         <template slot-scope="{row,$index}">
           <el-button type="warning" icon="el-icon-edit" size="limit" @click="updateTradeMark(row)">修改</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="limit">删除</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="limit" @click="deleteTradeMark(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -172,6 +172,30 @@
             return false
           }
         })
+      },
+
+      //删除
+      deleteTradeMark(row) {
+        this.$confirm(`确认删除${row.tmName}?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          let result = await this.$API.trademark.reqDeleteTradeMark(row.id);
+          if (result.code == 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.getPageList(this.list.length > 1 ? this.page : this.page - 1)
+          }
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       }
     }
 

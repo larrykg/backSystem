@@ -30,3 +30,11 @@ export const reqAddOrUpdateTradeMark = (tradeMark) => {
 
 }
 
+//删除 /admin/product/baseTrademark/remove/{id}
+export const reqDeleteTradeMark = (id) => {
+  return request({
+    url: `/admin/product/baseTrademark/remove/${id}`,
+    method: 'delete'
+  })
+}
+
