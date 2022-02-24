@@ -19,7 +19,6 @@
       <el-form-item label="三级分类">
         <el-select placeholder="请选择" v-model="cForm.category3Id" @change="handler3">
           <el-option :label="c3.name" :value="c3.id" v-for="(c3,index) in list3" :key="c3.id"></el-option>
-
         </el-select>
       </el-form-item>
 
@@ -60,6 +59,7 @@
         this.cForm.category2Id = '';
         this.cForm.category3Id = '';
         const {category1Id} = this.cForm;
+        this.$emit('getCategoryId', {categoryId: category1Id, level: 1});
         let result = await this.$API.attr.reqCategory2List(category1Id);
         if (result.code == 200) {
           this.list2 = result.data
@@ -70,6 +70,7 @@
         this.list3 = [];
         this.cForm.category3Id = '';
         const {category2Id} = this.cForm;
+        this.$emit('getCategoryId', {categoryId: category2Id, level: 2});
         let result = await this.$API.attr.reqCategory3List(category2Id);
         if (result.code == 200) {
           this.list3 = result.data
@@ -77,7 +78,8 @@
       },
       //三级分类回调
       handler3() {
-
+        const {category3Id} = this.cForm;
+        this.$emit('getCategoryId', {categoryId: category3Id, level: 3});
       }
     }
   }
