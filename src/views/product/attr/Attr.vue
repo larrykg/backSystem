@@ -58,12 +58,14 @@
 
           <el-table-column label="操作" width="width" prop="prop">
             <template slot-scope="{row,$index}">
-              <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+              <el-popconfirm :title='`确定删除${row.valueName}?`' @onConfirm="deleteAttrValue($index)">
+                <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference"></el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
 
         </el-table>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="reqAddOrUpdateAttr">保存</el-button>
         <el-button @click="isTableShow=true">取消</el-button>
       </div>
     </el-card>
@@ -172,6 +174,32 @@
         this.$nextTick(() => {
           this.$refs[index].focus()
         })
+      },
+      //气泡确认框 @onConfirm 2.15:@confirm
+      deleteAttrValue(index) {
+        this.attrInfo.attrValueList.splice(index, 1)
+      },
+      //保存按钮 添加修改属性
+      async reqAddOrUpdateAttr() {
+        //整理参数 属性值为空的不应该提交  flag字段不提交
+        this.attrInfo.attrValueList = this.attrInfo.attrValueList.filter(item => {
+          //过滤掉属性值不是空的
+          if (item.valueName != '') {
+            //删除掉flag属性
+            delete item.flag
+            return true
+          }
+          ;
+        });
+        try {
+          await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
+          this.isTableShow = true;
+          this.$message({type: 'success', message: '保存成功'});
+          this.getAttrList()
+        } catch (e) {
+          this.$message('保存失败')
+        }
+
       }
     }
 
