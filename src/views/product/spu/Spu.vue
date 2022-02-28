@@ -4,17 +4,19 @@
       <CategorySelect @getCategoryId="getCategoryId" :show="!show"></CategorySelect>
     </el-card>
     <el-card>
-      <div>
+      <!--      三个部分的内容-->
+      <div v-show="scene==0">
         <!--展示SPU列表-->
-        <el-button icon="el-icon-plus" type="primary">添加SPU</el-button>
+        <el-button icon="el-icon-plus" type="primary" :disabled="!category3Id" @click="addSpu">添加SPU</el-button>
         <el-table style="width: 100%" border :data="records">
           <el-table-column type="index" label="序号" width="80px" align="center"></el-table-column>
           <el-table-column prop="spuName" label="SPU名称" width="width"></el-table-column>
           <el-table-column prop="description" label="SPU描述" width="width"></el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{row,$index}">
-              <HintButton type="success" icon="el-icon-plus" size="mini" title="添加SKU"></HintButton>
-              <HintButton type="warning" icon="el-icon-edit" size="mini" title="修改SPU"></HintButton>
+              <HintButton type="success" icon="el-icon-plus" size="mini" title="添加SKU" @click="addSpu"></HintButton>
+              <HintButton type="warning" icon="el-icon-edit" size="mini" title="修改SPU"
+                          @click="updateSpu(row)"></HintButton>
               <HintButton type="info" icon="el-icon-info" size="mini" title="查看当前SPU全部SKU列表"></HintButton>
               <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除SKU"></HintButton>
             </template>
@@ -30,12 +32,17 @@
           layout="prev,pager,next,jumper,sizes,total"
           :total="total">
         </el-pagination>
-      </div>
+      </div v-s>
+      <SpuFrom v-show="scene==1"></SpuFrom>
+      <SkuForm v-show="scene==2"></SkuForm>
     </el-card>
   </div>
 </template>
 
 <script>
+  import SpuFrom from "@/views/product/spu/SpuFrom";
+  import SkuForm from "@/views/product/spu/SkuForm";
+
   export default {
     name: "Spu",
     data() {
@@ -48,8 +55,13 @@
         page: 1,
         limit: 3,
         records: [],//spu数据
-        total: 0
+        total: 0,
+        scene: 0,// 0代表展示SPU数据 1添加修改 2添加SKU
       }
+    },
+    components: {
+      SkuForm,
+      SpuFrom
     },
     methods: {
       //点击分页器第几页的回调
@@ -85,6 +97,12 @@
           this.total = result.data.total;
           this.records = result.data.records
         }
+      },
+      addSpu() {
+        this.scene = 1;
+      },
+      updateSpu(row) {
+        this.scene = 1
       }
     }
   }
