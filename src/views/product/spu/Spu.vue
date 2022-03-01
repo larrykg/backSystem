@@ -32,8 +32,8 @@
           layout="prev,pager,next,jumper,sizes,total"
           :total="total">
         </el-pagination>
-      </div v-s>
-      <SpuFrom v-show="scene==1"></SpuFrom>
+      </div>
+      <SpuFrom v-show="scene==1" @changeScene="changeScene" ref="spu"></SpuFrom>
       <SkuForm v-show="scene==2"></SkuForm>
     </el-card>
   </div>
@@ -102,7 +102,12 @@
         this.scene = 1;
       },
       updateSpu(row) {
-        this.scene = 1
+        this.scene = 1;
+        this.$refs.spu.initSpuData(row)
+      },
+      //自定义事件：
+      changeScene(scene) {
+        this.scene = scene
       }
     }
   }
