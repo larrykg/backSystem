@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0">
-      <CategorySelect @getCategoryId="getCategoryId" :show="!show"></CategorySelect>
+      <CategorySelect @getCategoryId="getCategoryId" :show="scene!=0"></CategorySelect>
     </el-card>
     <el-card>
       <!--      三个部分的内容-->

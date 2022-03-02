@@ -42,13 +42,11 @@
           <el-table-column prop="saleAttrName" label="属性名" width="width"></el-table-column>
           <el-table-column prop="prop" label="属性值名称列表" width="width">
             <template slot-scope="{row,$index}">
-              <!--        @close="handleClose(tag)"-->
               <el-tag :key="tag.id" v-for="(tag,index) in row.spuSaleAttrValueList" closable
-                      :disable-transitions="false">
+                      :disable-transitions="false" @close="handleClose(row.spuSaleAttrValueList,index)">
                 {{tag.saleAttrValueName}}
               </el-tag>
               <!--              @keyup.enter.native="handleInputConfirm"-->
-              <!--              -->
               <el-input class="input-new-tag" v-if="row.inputVisible" v-model="row.inputValue"
                         ref="saveTagInput" size="small" @blur="handleInputConfirm(row)">
               </el-input>
@@ -58,7 +56,8 @@
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{row,$index}">
-              <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini"
+                         @click="spu.spuSaleAttrList.splice($index,1)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -206,6 +205,10 @@
         row.inputVisible = false;
         //新增数据
         row.spuSaleAttrValueList.push(newSaleAttrValue)
+      },
+      //删除属性值
+      handleClose(listValue, index) {
+        listValue.splice(index, 1)
       }
     }
   }
