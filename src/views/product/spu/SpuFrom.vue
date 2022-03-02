@@ -48,12 +48,12 @@
                 {{tag.saleAttrValueName}}
               </el-tag>
               <!--              @keyup.enter.native="handleInputConfirm"-->
-              <!--              @blur="handleInputConfirm"-->
+              <!--              -->
               <el-input class="input-new-tag" v-if="row.inputVisible" v-model="row.inputValue"
-                        ref="saveTagInput" size="small">
+                        ref="saveTagInput" size="small" @blur="handleInputConfirm(row)">
               </el-input>
               <!--              @click="showInput"-->
-              <el-button v-else class="button-new-tag" size="small">添加</el-button>
+              <el-button v-else class="button-new-tag" size="small" @click="addSaleAttrValue(row)">添加</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
@@ -180,7 +180,32 @@
         const [baseSaleAttrId, saleAttrName] = this.attrIdAndName.split(':');
         //向SPU对象中添加新的销售属性 以便展示与后续修改
         let newObj = {baseSaleAttrId, saleAttrName, spuSaleAttrValueList: []};
-        this.spu.spuSaleAttrList.push(newObj)
+        this.spu.spuSaleAttrList.push(newObj);
+        this.attrIdAndName = ''
+      },
+      //添加销售属性值的按钮
+      addSaleAttrValue(row) {
+        //需要展示input 通过inputVisible控制
+        this.$set(row, 'inputVisible', true);
+        //通过响应式数据 inputValue 字段收集新增的销售属性值
+        this.$set(row, 'inputValue', '')
+      },
+      //添加销售属性值的Input的blur事件
+      handleInputConfirm(row) {
+        const {baseSaleAttrId, inputValue} = row;
+        if (inputValue == '') {
+          this.$message('属性值不能为空');
+          return
+        }
+        let result = row.spuSaleAttrValueList.every(item => {
+          return item.saleAttrValueName != inputValue
+        })
+        if (!result) return;
+        let newSaleAttrValue = {baseSaleAttrId, saleAttrValueName: inputValue};
+        //修改 inputVisible 为false
+        row.inputVisible = false;
+        //新增数据
+        row.spuSaleAttrValueList.push(newSaleAttrValue)
       }
     }
   }
