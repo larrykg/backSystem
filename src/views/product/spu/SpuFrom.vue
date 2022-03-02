@@ -21,7 +21,9 @@
           list-type="picture-card"
           :file-list="spuImages"
           :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove">
+          :on-remove="handleRemove"
+          :on-success="handleSuccess"
+        >
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
@@ -30,10 +32,11 @@
       </el-form-item>
 
       <el-form-item label="销售属性">
-        <el-select :placeholder="`还有${unSelectSaleAttr.length}未选择`" v-model="attrId">
-          <el-option :label="un.name" :value="un.id" v-for="(un,index) in unSelectSaleAttr" :key="un.id"></el-option>
+        <el-select :placeholder="`还有${unSelectSaleAttr.length}未选择`" v-model="attrIdAndName">
+          <el-option :label="un.name" :value="`${un.id}:${un.name}`" v-for="(un,index) in unSelectSaleAttr"
+                     :key="un.id"></el-option>
         </el-select>
-        <el-button icon="el-icon-plus" type="primary" :disabled="!attrId">添加销售属性</el-button>
+        <el-button icon="el-icon-plus" type="primary" :disabled="!attrIdAndName" @click="addSaleAttr">添加销售属性</el-button>
         <el-table style="width: 100%" border :data="spu.spuSaleAttrList">
           <el-table-column type="index" label="序号" width="80px" align="center"></el-table-column>
           <el-table-column prop="saleAttrName" label="属性名" width="width"></el-table-column>
@@ -115,7 +118,7 @@
         spuImages: [],
         saleAttrList: [],
         //收集未选择的销售属性ID
-        attrId: ''
+        attrIdAndName: ''
       };
     },
     computed: {
@@ -128,11 +131,16 @@
         });
         return result
       }
-
     },
     methods: {
+      //照片墙上传成功
+      handleSuccess(res, file, fileList) {
+        console.log(fileList);
+      },
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        //file代表删除的图片 fileList代表删除某一张之后剩余的图片
+        //对于已有的图片 已有name url字段 服务器不需要该字段
+        this.spuImages = fileList;
       },
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file.url;
@@ -166,6 +174,13 @@
         if (saleResult.code == 200) {
           this.saleAttrList = saleResult.data
         }
+      },
+      //添加新的销售属性
+      addSaleAttr() {
+        const [baseSaleAttrId, saleAttrName] = this.attrIdAndName.split(':');
+        //向SPU对象中添加新的销售属性 以便展示与后续修改
+        let newObj = {baseSaleAttrId, saleAttrName, spuSaleAttrValueList: []};
+        this.spu.spuSaleAttrList.push(newObj)
       }
     }
   }
